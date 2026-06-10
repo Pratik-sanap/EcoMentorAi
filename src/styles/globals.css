@@ -1,0 +1,20 @@
+/* src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+html,
+body {
+  @apply min-h-screen bg-white text-gray-900 antialiased transition-colors duration-300;
+}
+
+/* Dark mode */
+html.dark {
+  @apply bg-gray-900 text-gray-100;
+}
+
+/* Focus outline for accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+}
