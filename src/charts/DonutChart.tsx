@@ -12,29 +12,31 @@ export interface DonutChartDataItem {
 
 export interface DonutChartProps {
   data: DonutChartDataItem[];
-  /** Height of the chart container */
+  /** Explicit pixel height for the chart area */
   height?: number;
 }
 
 const DEFAULT_COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-export const DonutChart: React.FC<DonutChartProps> = ({ data, height = 300 }) => {
+export const DonutChart: React.FC<DonutChartProps> = ({ data, height = 220 }) => {
   return (
-    <div className="w-full" style={{ height }}>
+    <div
+      style={{ width: "100%", height: `${height}px`, border: "2px dashed #a855f7" }}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius="60%"
-            outerRadius="80%"
+            innerRadius="55%"
+            outerRadius="75%"
             paddingAngle={4}
             dataKey="value"
           >
             {data.map((item, index) => (
               <Cell
-                key={`cell-${index}`}
+                key={`donut-cell-${index}`}
                 fill={item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]}
               />
             ))}
@@ -42,10 +44,10 @@ export const DonutChart: React.FC<DonutChartProps> = ({ data, height = 300 }) =>
           <Tooltip
             formatter={(value: number) => [`${value} kg CO₂e`, "Emissions"]}
             contentStyle={{
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              backgroundColor: "rgba(255,255,255,0.95)",
               borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
             }}
           />
           <Legend iconType="circle" layout="horizontal" verticalAlign="bottom" align="center" />

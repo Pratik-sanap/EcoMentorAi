@@ -1,45 +1,49 @@
 // src/app/recommendations/page.tsx
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
+import { useAppState } from "../../lib/state";
 import { InfoCard } from "../../components/InfoCard";
 import { PrimaryButton } from "../../components/PrimaryButton";
+import { generateCarbonReport } from "../../engine/carbon/carbonEngine";
+import { calculateEcoScore } from "../../engine/scoring/scoringEngine";
+import { generateRecommendations } from "../../engine/recommendation/recommendationEngine";
+import { RecCategory } from "../../models/recommendation";
+
+const ICONS: Record<string, string> = {
+  [RecCategory.Transportation]: "🚗",
+  [RecCategory.Food]: "🥗",
+  [RecCategory.Energy]: "⚡",
+  [RecCategory.Waste]: "🗑️",
+  [RecCategory.Lifestyle]: "🌿",
+};
 
 export default function RecommendationsPage() {
-  const recommendations = [
-    {
-      id: "rec-1",
-      title: "Transition to LED lighting",
-      category: "Energy",
-      description: "Replace high-wattage incandescent light bulbs with energy-efficient LED bulbs. This can save up to 75% on lighting energy.",
-      impact: "45 kg CO₂e / year",
-      icon: "💡",
-    },
-    {
-      id: "rec-2",
-      title: "Initiate Meat-Free Mondays",
-      category: "Food & Diet",
-      description: "Choose plant-based alternatives once a week. Skipping beef and pork can significantly reduce farming and transport emissions.",
-      impact: "180 kg CO₂e / year",
-      icon: "🥗",
-    },
-    {
-      id: "rec-3",
-      title: "Opt for Active Transportation",
-      category: "Transport",
-      description: "Bicycle, run, or walk for journeys under 5km rather than driving alone. Great for physical health and zero carbon emissions.",
-      impact: "320 kg CO₂e / year",
-      icon: "🚲",
-    },
-    {
-      id: "rec-4",
-      title: "Eliminate Single-Use Plastics",
-      category: "Waste Management",
-      description: "Switch to reusable carrier bags, water bottles, and food containers to reduce landfill waste and plastic packaging production.",
-      impact: "24 kg CO₂e / year",
-      icon: "🥤",
-    },
-  ];
+  const state = useAppState();
+  const { activityLog, carbonReport: storedReport, currentScore: storedScore } = state.userProfile;
+
+  const hasActivities = activityLog.length > 0;
+
+  const report = useMemo(() => {
+    if (storedReport && hasActivities) return storedReport;
+    if (hasActivities) return generateCarbonReport(activityLog);
+    return null;
+  }, [storedReport, activityLog, hasActivities]);
+
+  const ecoScore = useMemo(() => {
+    if (storedScore !== undefined && hasActivities) {
+      return { score: storedScore, scoreLevel: "Improving" as any, improvementPotential: 50 }; // Simplified since we don't have full EcoScore from state
+    }
+    if (report && hasActivities) {
+      return calculateEcoScore(report, activityLog);
+    }
+    return { score: 68, scoreLevel: "Improving" as any, improvementPotential: 32 }; 
+  }, [storedScore, report, activityLog, hasActivities]);
+
+  const { biggestOpportunity, recommendations } = useMemo(() => {
+    if (!report) return { biggestOpportunity: null, recommendations: [] };
+    return generateRecommendations(report, ecoScore, activityLog);
+  }, [report, ecoScore, activityLog]);
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
@@ -52,18 +56,42 @@ export default function RecommendationsPage() {
         </p>
       </div>
 
+      {!hasActivities && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+          <p className="text-sm text-yellow-700">
+            Log some activities in the Calculator to see your personalized recommendations!
+          </p>
+        </div>
+      )}
+
+      {biggestOpportunity && (
+        <div className="mb-8 bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 shadow-sm">
+          <h2 className="text-xl font-bold text-emerald-800 mb-2">🔥 Biggest Opportunity: {biggestOpportunity.topEmissionSource}</h2>
+          <p className="text-emerald-700 font-medium mb-2">{biggestOpportunity.bestImprovementOpportunity}</p>
+          <p className="text-sm text-emerald-600 mb-4">{biggestOpportunity.personalizedExplanation}</p>
+          <div className="flex gap-4">
+            <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
+              Savings: {biggestOpportunity.estimatedCO2Savings} kg CO₂e / month
+            </span>
+            <span className="text-xs font-semibold bg-white text-emerald-600 border border-emerald-200 px-3 py-1 rounded-full">
+              Difficulty: {biggestOpportunity.difficultyLevel}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Recommendations Cards Grid */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {recommendations.map((rec) => (
           <InfoCard
             key={rec.id}
-            icon={rec.icon}
+            icon={ICONS[rec.category] || "💡"}
             title={`${rec.title} (${rec.category})`}
             description={rec.description}
             action={
               <div className="flex items-center justify-between w-full mt-4 gap-4 border-t border-gray-100 pt-3">
                 <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                  Estimated saving: {rec.impact}
+                  Estimated saving: {rec.impactKgCO2} kg CO₂e
                 </span>
                 <PrimaryButton className="text-xs py-1 px-3 opacity-70 cursor-not-allowed" disabled>
                   Accept Action

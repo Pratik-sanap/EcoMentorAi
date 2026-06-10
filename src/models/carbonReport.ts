@@ -9,6 +9,10 @@ export interface CarbonReport {
   totalKgCO2: number;
   /** Detailed breakdown by ActivityType */
   breakdown: CarbonBreakdown;
+  /** Projected total emission over 30 days (kg CO₂) */
+  monthlyProjection: number;
+  /** The ActivityType category with the highest emissions */
+  topEmissionCategory: string;
   /** Date for the report (ISO string) */
   date: string;
 }

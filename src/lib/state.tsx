@@ -16,13 +16,23 @@ export type AppAction =
   | { type: "SET_USER_PROFILE"; payload: UserProfile }
   | { type: "UPDATE_PREFERENCES"; payload: Partial<UserProfile["preferences"]> }
   | { type: "ADD_ACTIVITY"; payload: UserProfile["activityLog"][number] }
+  | { type: "REMOVE_ACTIVITY"; payload: string }
   | { type: "SET_CARBON_REPORT"; payload: UserProfile["carbonReport"] }
   | { type: "SET_RECOMMENDATIONS"; payload: UserProfile["recommendations"] }
   | { type: "SET_CHALLENGES"; payload: UserProfile["challenges"] }
   | { type: "SET_PREFERENCES"; payload: UserProfile["preferences"] }
   | { type: "SET_LAST_CALCULATED_AT"; payload: string }
   | { type: "SET_CURRENT_SCORE"; payload: number }
-  | { type: "SET_STREAK_COUNT"; payload: number };
+  | { type: "SET_STREAK_COUNT"; payload: number }
+  | {
+      type: "SET_STREAKS";
+      payload: {
+        streakDays: number;
+        bestStreakDays: number;
+        streakWeeksImprovement: number;
+        badges: string[];
+      };
+    };
 
 /** Reducer handling state transitions */
 export const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -43,6 +53,16 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         userProfile: {
           ...state.userProfile,
           activityLog: [...state.userProfile.activityLog, action.payload],
+        },
+      };
+    case "REMOVE_ACTIVITY":
+      return {
+        ...state,
+        userProfile: {
+          ...state.userProfile,
+          activityLog: state.userProfile.activityLog.filter(
+            (a) => a.id !== action.payload
+          ),
         },
       };
     case "SET_CARBON_REPORT":
@@ -79,6 +99,17 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
         ...state,
         userProfile: { ...state.userProfile, streakCount: action.payload },
+      };
+    case "SET_STREAKS":
+      return {
+        ...state,
+        userProfile: {
+          ...state.userProfile,
+          streakDays: action.payload.streakDays,
+          bestStreakDays: action.payload.bestStreakDays,
+          streakWeeksImprovement: action.payload.streakWeeksImprovement,
+          badges: action.payload.badges,
+        },
       };
     default:
       return state;

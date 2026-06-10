@@ -37,4 +37,12 @@ export interface UserProfile {
   currentScore?: number;
   /** Number of consecutive weeks the user has improved */
   streakCount?: number;
+  /** Consecutive days of activity logging */
+  streakDays?: number;
+  /** Best streak of consecutive days of activity logging */
+  bestStreakDays?: number;
+  /** Consecutive weeks of improvement */
+  streakWeeksImprovement?: number;
+  /** Earned achievement badges */
+  badges?: string[];
 }

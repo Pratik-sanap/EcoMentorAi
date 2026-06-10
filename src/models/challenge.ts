@@ -23,4 +23,6 @@ export interface Challenge {
   isCompleted: boolean;
   /** Date when the challenge was assigned (ISO format) */
   assignedAt: string;
+  /** Estimated CO2 savings in kg */
+  estimatedCO2Savings: number;
 }
