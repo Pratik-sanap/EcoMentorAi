@@ -230,7 +230,7 @@ EcoMentorAi/
 - **Dashboard:** ![Dashboard](/coach%20(2).png)
 - **What-If Simulator:** ![What-If Simulator](/coach%20(3).png)
 - **AI Coach Interface:** ![AI Coach Interface](/coach%20(1).png)
-- **Weekly Challenges:** ![Weekly Challenges](/chaleneg.png)
+- **Weekly Challenges:** ![Weekly Challenges](/challenge.png)
 
 ## 15. Why EcoMentor AI Stands Out
 
