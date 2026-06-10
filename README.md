@@ -227,10 +227,10 @@ EcoMentorAi/
 ## 14. Screenshots Section
 *(Placeholders for future UI screenshots)*
 
-- **Dashboard:** `[Insert Dashboard Screenshot Here]`
-- **What-If Simulator:** `[Insert Simulator Screenshot Here]`
-- **AI Coach Interface:** `[Insert AI Coach Screenshot Here]`
-- **Weekly Challenges:** `[Insert Challenges Screenshot Here]`
+- **Dashboard:** ![Dashboard](/coach%20(2).png)
+- **What-If Simulator:** ![What-If Simulator](/coach%20(3).png)
+- **AI Coach Interface:** ![AI Coach Interface](/coach%20(1).png)
+- **Weekly Challenges:** ![Weekly Challenges](/chaleneg.png)
 
 ## 15. Why EcoMentor AI Stands Out
 
