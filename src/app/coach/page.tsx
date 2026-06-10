@@ -29,7 +29,7 @@ export default function CoachPage() {
 
   // Derive eco score
   const ecoScore = useMemo(() => {
-    if (storedScore !== undefined && hasActivities) return storedScore;
+    if (storedScore !== undefined && storedScore !== null && storedScore > 0 && hasActivities) return storedScore;
     if (report && hasActivities) return calculateEcoScore(report, activityLog).score;
     return 68; // Mock default
   }, [storedScore, report, activityLog, hasActivities]);

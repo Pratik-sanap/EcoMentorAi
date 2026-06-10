@@ -21,7 +21,7 @@ const DEFAULT_COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 export const DonutChart: React.FC<DonutChartProps> = ({ data, height = 220 }) => {
   return (
     <div
-      style={{ width: "100%", height: `${height}px`, border: "2px dashed #a855f7" }}
+      style={{ width: "100%", height: `${height}px` }}
     >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>

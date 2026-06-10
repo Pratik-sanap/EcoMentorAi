@@ -33,7 +33,7 @@ export const LineChart: React.FC<LineChartProps> = ({
 }) => {
   return (
     <div
-      style={{ width: "100%", height: `${height}px`, border: "2px dashed #a855f7" }}
+      style={{ width: "100%", height: `${height}px` }}
     >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsLineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

@@ -31,7 +31,7 @@ export default function RecommendationsPage() {
   }, [storedReport, activityLog, hasActivities]);
 
   const ecoScore = useMemo(() => {
-    if (storedScore !== undefined && hasActivities) {
+    if (storedScore !== undefined && storedScore !== null && storedScore > 0 && hasActivities) {
       return { score: storedScore, scoreLevel: "Improving" as any, improvementPotential: 50 }; // Simplified since we don't have full EcoScore from state
     }
     if (report && hasActivities) {

@@ -28,7 +28,7 @@ export interface BarChartProps {
 export const BarChart: React.FC<BarChartProps> = ({ data, height = 220 }) => {
   return (
     <div
-      style={{ width: "100%", height: `${height}px`, border: "2px dashed #a855f7" }}
+      style={{ width: "100%", height: `${height}px` }}
     >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsBarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
