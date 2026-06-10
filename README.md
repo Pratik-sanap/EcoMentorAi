@@ -26,12 +26,131 @@ EcoMentor AI is a comprehensive web application designed to bridge the gap betwe
 - **User Profile Management:** Customize your experience, track your progress, and manage your sustainability goals in a centralized hub.
 
 ## 5. System Architecture
-EcoMentor AI utilizes a modern, serverless architecture optimized for performance and rapid development:
-- **Frontend Framework:** Next.js 15 (App Router) with React
-- **Styling:** Tailwind CSS for a responsive, modern UI
-- **State Management:** React Hooks and Context API
-- **Data Persistence:** LocalStorage (for rapid prototyping and offline-first capabilities)
-- **Data Visualization:** Recharts for dynamic, accessible charts
+
+### 5.1 Architecture Diagram
+
+```mermaid
+flowchart TD
+    %% Define User
+    User((User))
+
+    %% Define Pages (UI Layer)
+    subgraph UI_Layer [Frontend / Pages]
+        CalcPage[Calculator Page]
+        Dash[Dashboard]
+        RecPage[Recommendations Page]
+        CoachPage[Coach Page]
+        ChalPage[Challenges Page]
+        SimPage[What-If Simulator]
+        ProfPage[Profile]
+    end
+
+    %% Define Core Engines (Logic Layer)
+    subgraph Logic_Layer [Core Engines]
+        CE[Carbon Engine]
+        RE[Recommendation Engine]
+        AICE[AI Coach Engine]
+        CHE[Challenge Engine]
+        SE[Streak Engine]
+    end
+
+    %% Define State & Persistence
+    subgraph State_Layer [State Management]
+        Ctx[React Context + Reducer]
+        LS[(localStorage)]
+    end
+
+    %% Define Data Objects
+    subgraph Data_Objects [Data Entities]
+        Log[Activity Log]
+        Report[Carbon Report]
+    end
+
+    %% --- Relationships & Data Flow ---
+
+    %% User Interaction
+    User --> CalcPage
+    User --> Dash
+    User --> RecPage
+    User --> CoachPage
+    User --> ChalPage
+    User --> SimPage
+    User --> ProfPage
+
+    %% Data Creation
+    CalcPage -- Submits --> Log
+    
+    %% Engine Processing
+    Log --> CE
+    CE -- Generates --> Report
+    Report --> RE
+    Report --> AICE
+    Log --> CHE
+    Log --> SE
+    
+    %% Engine Outputs to UI
+    RE -- Feeds --> RecPage
+    AICE -- Feeds --> CoachPage
+    CHE -- Feeds --> ChalPage
+    SE -- Updates --> ProfPage
+    Report -- Feeds --> Dash
+    SE -- Updates --> Dash
+
+    %% State Management Flow
+    UI_Layer <-->|Dispatch / Read| Ctx
+    Logic_Layer <-->|Update State| Ctx
+    Ctx <-->|Persist / Hydrate| LS
+
+    %% Styling
+    classDef page fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef engine fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef state fill:#fef08a,stroke:#ca8a04,stroke-width:2px;
+    classDef data fill:#f3e8ff,stroke:#9333ea,stroke-width:2px;
+
+    class CalcPage,Dash,RecPage,CoachPage,ChalPage,SimPage,ProfPage page;
+    class CE,RE,AICE,CHE,SE engine;
+    class Ctx,LS state;
+    class Log,Report data;
+```
+
+### 5.2 Component Explanations
+
+**UI / Pages Layer:**
+*   **Calculator Page:** The entry point for users to log their daily activities (transportation, energy, food).
+*   **Dashboard:** The central hub displaying visualizations of the user's carbon footprint, historical trends, and current streaks.
+*   **Recommendations, Coach, & Challenges Pages:** Dedicated views for users to interact with personalized tips, receive AI coaching feedback, and track active weekly challenges.
+*   **What-If Simulator:** An interactive sandbox where users can adjust variables to predict how lifestyle changes will impact their future emissions.
+*   **Profile:** Manages user settings, baseline configurations, and earned badges/achievements.
+
+**Core Engines (Logic Layer):**
+*   **Carbon Engine:** The mathematical core that converts raw user activity logs into standardized carbon emission metrics (CO2e).
+*   **Recommendation Engine:** Analyzes the output from the Carbon Engine to identify high-emission areas and generate actionable reduction strategies.
+*   **AI Coach Engine:** A rule-based system that monitors user progress over time, offering timely encouragement, behavioral nudges, and insights.
+*   **Challenge Engine:** Manages the lifecycle of weekly challenges (e.g., "Meatless Monday"), verifying completion based on user logs.
+*   **Streak Engine:** Tracks consecutive days of logging or goal-meeting, gamifying the experience to encourage consistent engagement.
+
+**State & Persistence Layer:**
+*   **React Context + Reducer:** Acts as the single source of truth for the application's global state, handling complex state transitions cleanly without prop-drilling.
+*   **localStorage:** The lightweight persistence layer ensuring user data is saved across sessions natively in the browser, providing a fast, offline-capable experience.
+
+### 5.3 Data Flow Description
+
+1.  **Input:** The `User` interacts with the `Calculator Page` to input daily behaviors, which creates an `Activity Log`.
+2.  **Processing:** The `Activity Log` is dispatched to the global state (`React Context`) and immediately processed by the `Carbon Engine`.
+3.  **Analysis:** The `Carbon Engine` calculates the emissions and generates a comprehensive `Carbon Report`.
+4.  **Distribution:** This `Carbon Report` is broadcast to downstream engines:
+    *   The `Recommendation Engine` uses it to suggest improvements.
+    *   The `AI Coach Engine` uses it to formulate personalized advice.
+5.  **Gamification:** Simultaneously, the raw `Activity Log` triggers the `Challenge Engine` (to check for challenge completions) and the `Streak Engine` (to increment consecutive days).
+6.  **Presentation:** The updated state flows back down to the UI components (`Dashboard`, `Coach Page`, etc.), instantly reflecting the new data and achievements.
+7.  **Persistence:** Every state change triggered by the Reducer is automatically serialized and saved to `localStorage`, ensuring no data loss if the user refreshes or closes the tab.
+
+### 5.4 Why This Architecture is Scalable and Maintainable
+
+*   **Separation of Concerns:** By strictly decoupling the UI layers from the business logic (Engines) and data management (Context/Reducer), the application is easier to test, debug, and expand. You can modify the calculation logic without touching the UI components.
+*   **Predictable State Management:** Using a centralized Context + Reducer pattern ensures that state transitions are explicit and predictable. It avoids the chaos of scattered `useState` hooks when managing complex, interdependent data (like streaks depending on logs).
+*   **Modular "Engine" Pattern:** Adding new features (e.g., a "Team Leaderboard Engine") is straightforward. New engines can simply plug into the existing data flow, consuming the `Activity Log` or `Carbon Report` without breaking existing systems.
+*   **Performant and Offline-Ready:** Relying on `localStorage` and client-side processing removes database latency, making the app feel incredibly snappy. This sets a solid foundation before eventually migrating to a cloud database (like Supabase or Firebase), which would only require swapping out the persistence layer, not the core application logic.
 
 ## 6. Application Workflow
 1. **Onboarding:** Users complete a quick profile setup to establish baseline carbon emissions.
@@ -113,5 +232,37 @@ EcoMentorAi/
 - **AI Coach Interface:** `[Insert AI Coach Screenshot Here]`
 - **Weekly Challenges:** `[Insert Challenges Screenshot Here]`
 
-## 15. Conclusion
+## 15. Why EcoMentor AI Stands Out
+
+Unlike traditional carbon calculators that only report emissions, EcoMentor AI closes the action loop through:
+
+- Personalized Recommendation Engine
+- Rule-Based AI Coach
+- Weekly Sustainability Challenges
+- Streak & Badge Gamification
+- What-If Simulation Engine
+
+This transforms carbon awareness into sustained behavioral change.
+
+## 16. Smart Assistant Logic
+
+EcoMentor AI includes a dynamic coaching assistant that:
+
+- Analyzes emission patterns
+- Identifies dominant emission categories
+- Generates personalized advice
+- Reinforces positive habits
+- Suggests improvement opportunities
+- Tracks user progress over time
+
+The assistant adapts recommendations based on user behavior rather than displaying static tips.
+
+- Dashboard visualization rendering may vary depending on browser and Recharts compatibility.
+- Fallback visualization cards are displayed when chart rendering is unavailable.
+
+## 17. Demo Video
+
+https://link...
+
+## 18. Conclusion
 EcoMentor AI demonstrates a powerful, user-centric approach to environmental sustainability. By combining accurate tracking, intelligent coaching, and engaging gamification within a modern tech stack, it provides a scalable foundation for empowering individuals to make meaningful reductions to their carbon footprint.
