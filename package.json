@@ -11,22 +11,25 @@
     "test": "jest"
   },
   "dependencies": {
+    "autoprefixer": "10.4.16",
     "next": "15.0.0",
+    "postcss": "8.4.31",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "typescript": "5.4.5",
+    "recharts": "2.12.7",
     "tailwindcss": "3.4.1",
-    "postcss": "8.4.31",
-    "autoprefixer": "10.4.16",
-    "recharts": "2.12.7"
+    "typescript": "5.4.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "6.2.0",
+    "@testing-library/react": "14.1.2",
+    "@testing-library/user-event": "14.5.2",
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "eslint": "8.57.0",
     "eslint-config-next": "15.0.0",
-    "prettier": "3.2.5",
     "jest": "29.7.0",
-    "@testing-library/react": "14.1.2",
-    "@testing-library/jest-dom": "6.2.0",
-    "@testing-library/user-event": "14.5.2"
+    "prettier": "3.2.5"
   }
 }
